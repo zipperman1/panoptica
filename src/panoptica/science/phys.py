@@ -1,4 +1,5 @@
-'''#TODO'''
+#TODO make a docstring for this submodule
+
 import numpy as np
 
 def snells_law(alpha: float, n1=1., n2=1.5):

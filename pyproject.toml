@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "panoptica"
 version = "0.0.1"
 authors = [
-  { name="zipperman1"},
+  {name="zipperman1"},
 ]
 description = "A simple library for geometrical optics simulation"
 readme = "README.md"
