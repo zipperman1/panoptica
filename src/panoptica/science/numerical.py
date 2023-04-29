@@ -4,6 +4,8 @@ Functions
 ---------
     uniform_grid
         Constructs a uniform grid along the function f(x) with derivative f_prime(x)
+    solver
+        Finds an intersection point between an object defined by the function f(x) and a ray defined by y = kx + b
 """
 
 from typing import Callable
