@@ -21,7 +21,7 @@ def unit_vector(vector: np.ndarray) -> np.ndarray:
     Returns
     -------
     norm_vector : array_like
-        A normalised vector or array of vectors
+        A normalized vector or array of vectors
     """
     if len(vector.shape) > 2:
         raise IndexError("Maximum vector dimensions is 2")
