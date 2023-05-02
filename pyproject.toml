@@ -14,11 +14,14 @@ requires-python = ">=3.7"
 classifiers = [
     "Programming Language :: Python :: 3",
     "Operating System :: OS Independent",
+    "Development Status :: 3 - Alpha",
+    "Framework :: Matplotlib",
+    "License :: OSI Approved :: MIT License",
 ]
 dependencies = [
     "numpy",
     "matplotlib",
-    "scipy"
+    "scipy",
 ]
 
 [project.urls]

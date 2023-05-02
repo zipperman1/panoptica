@@ -9,6 +9,7 @@ Functions
 """
 
 import numpy as np
+from typing import Callable
 
 def unit_vector(vector: np.ndarray) -> np.ndarray:
     """Returns the unit vector (array of unit vectors) of the vector (array).
@@ -59,3 +60,11 @@ def find_angle(v1: np.ndarray, v2: np.ndarray) -> float:
     angle = np.arccos(np.clip((v1_u*v2_u).sum(ax), -1.0, 1.0))
     
     return angle
+
+def init_LGN_vectors(grid: np.ndarray, origin: np.ndarray, f: Callable, f_prime: Callable):
+    '''Defining and initialising the line, grad and normal vectors'''
+    L = np.column_stack((grid, f(grid))) - origin 
+    G = np.column_stack((np.ones(len(grid)), f_prime(grid)))
+    N = np.column_stack((-f_prime(grid), np.ones(len(grid))))
+    
+    return L, G, N

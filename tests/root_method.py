@@ -8,6 +8,12 @@ from panoptica.science.linalg import find_angle, unit_vector
 def f(x):
     return x**2
 
+# def f(x):
+#     y = x**2
+#     y[np.abs(x) > 5] = np.nan
+            
+#     return y
+
 def f_prime(x):
     return 2*(x)
 
@@ -24,25 +30,27 @@ if __name__ == '__main__':
     ax.set_aspect('equal', adjustable='box')
     
     N = 10
-    K = np.tan(np.radians(np.linspace(0.1, 90, N)))
+    K = np.tan(np.radians(np.linspace(0.1, 180, N)))
     B = np.ones(N)*5
-    grid = solver(K, B, f, f_prime=f_prime)[0]
-    print(grid)
+    grid, mask = solver(K, B, f, f_prime=f_prime)
+    
+    grid = grid[np.logical_and(mask, np.abs(grid) < np.inf)]
 
     light_source = np.array((0, 5))
-    const = 2
+    length_after_refraction = 5
 
     L, G, N = init_vectors(grid, light_source, f, f_prime)  
 
     n1, n2 = -unit_vector(N), -unit_vector(G)
     beta = snells_law(find_angle(L, G) - np.pi / 2, n2=1.5)
 
-    R = const * n1 + const * (np.tan(beta) * n2.T).T
+    R = length_after_refraction * n1 + length_after_refraction * (np.tan(beta) * n2.T).T
 
     for i, x in enumerate(grid):
         ax.plot((light_source[0], x), (light_source[1], f(x)), c='red')
         ax.plot((x, x + R[i, 0]), (f(x), f(x) + R[i, 1]), c='red')
         ax.plot((x, x + N[i, 0]), (f(x), f(x) + N[i, 1]), '--', c='gray')
+        ax.plot((x, x + G[i, 0]), (f(x), f(x) + G[i, 1]), '--', c='gray')
         ax.plot((x, x + -N[i, 0]), (f(x), f(x) + -N[i, 1]), '--', c='gray')
 
 

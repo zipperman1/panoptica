@@ -25,9 +25,10 @@ class TestSolverFunction(unittest.TestCase):
         def quad_prime(x):
             return 2*x
         
-        np.testing.assert_almost_equal(np.abs(solver(self.K, self.B, quad, f_prime=quad_prime)[0]),\
-                                       np.minimum(np.abs((self.K + np.sqrt(self.K**2 + 4 * self.B))/(2)),\
-                                       np.abs((self.K - np.sqrt(self.K**2 + 4 * self.B))/(2))))
+        x1 = np.abs((self.K + np.sqrt(self.K**2 + 4 * self.B))/(2))
+        x2 = np.abs((self.K - np.sqrt(self.K**2 + 4 * self.B))/(2))
+        
+        np.testing.assert_almost_equal(np.abs(solver(self.K, self.B, quad, f_prime=quad_prime)[0]), np.minimum(x1, x2))
         
 if __name__ == "__main__":
     unittest.main()

@@ -4,8 +4,12 @@ Requirements
 ------------
     numpy,
     matplotlib
+    scipy
     
 Sub-packages
 ------------
-    math
+    science
+    opticalsystem
 """
+
+from panoptica.opticalsystem import * # :(
