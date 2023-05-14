@@ -50,7 +50,7 @@ class LightSource:
             self.K = np.tan(np.linspace(direction - angle, 
                                         direction + angle, 
                                         density))
-        self.B = np.tile(angle*position[0] + position[1], density)
+        self.B = position[0]*self.K + position[1]*np.ones_like(self.K)
         self.ray_points = np.array([np.tile(position, (density, 1))])
         
 class Surface:
@@ -127,6 +127,13 @@ class OpticalSystem:
         self.light_sources = np.append(self.light_sources, light_sources)
         
     def add_surfaces(self, *surfaces):
+        """Adds light surfaces to the optical system
+        
+        Parameters
+        ----------
+        surfaces : array_like
+            An array of surfaces
+        """
         self.surfaces = np.append(self.surfaces, sorted(surfaces, 
                                                         key=lambda _: _.func(0),
                                                         reverse=True))
@@ -167,7 +174,7 @@ class OpticalSystem:
                     new_ray_points[:, 0][last_mask] = last_grid + R[:, 0]
                     new_ray_points[:, 1][last_mask] = last_func(last_grid) + R[:, 1]
                 
-                # These a re recalculated after the if block so we dont have to seve them
+                # These are recalculated after the if block so we dont have to seve them
                 betas = snells_law(find_angle(L, G) - np.pi / 2,
                                    n1=surface.n1,
                                    n2=surface.n2)
@@ -209,7 +216,7 @@ class OpticalSystem:
         for light_source in self.light_sources:
             rays = light_source.ray_points
             for i in range(rays.shape[1]):
-                self.ax.plot(rays[:, i, 0], rays[:, i, 1], c='yellow')
+                self.ax.plot(rays[:, i, 0], rays[:, i, 1], c='orange')
                 
         for surface in self.surfaces:
             x = np.linspace(-surface.radius, surface.radius, 1000)
