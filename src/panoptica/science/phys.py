@@ -1,9 +1,15 @@
-#TODO make a docstring for this submodule
+"""Physics for panoptica
+
+Functions
+---------
+    snells_law
+        Returns the angle of the refracted ray according to the Snell's law
+"""
 
 import numpy as np
 
 def snells_law(alpha: float, n1=1., n2=1.5):
-    '''Returns the angle of the refracted ray according to the Snell's law
+    """Returns the angle of the refracted ray according to the Snell's law
     
     Parameters
     ----------
@@ -18,7 +24,7 @@ def snells_law(alpha: float, n1=1., n2=1.5):
     -------
     beta : float
         Angle of refraction
-    '''
+    """
     beta = np.arcsin(n1*np.sin(alpha) / n2)
     
     return beta

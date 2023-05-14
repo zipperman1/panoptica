@@ -1,7 +1,6 @@
-# TODO write docstrings
-
-from typing import Any
+from typing import Callable
 import numpy as np
+from numpy.typing import ArrayLike
 import matplotlib.pyplot as plt
 from panoptica.science.numerical import solver
 from panoptica.science.phys import snells_law
@@ -18,9 +17,15 @@ class LightSource:
         Array of angle coefficients of rays represented as a linear function
     B : array_like
         Array of angle coefficients of rays represented as a linear function
-    ray_points
+    ray_points : array_like
+        Points of ray propagation
     """
-    def __init__(self, position, direction, angle, density) -> None:
+    def __init__(self, 
+                 position: ArrayLike, 
+                 direction: float, 
+                 angle:float, 
+                 density:float,
+                 degrees: bool = False) -> None:
         """Constructs a light source object
         
         Parameters
@@ -28,21 +33,63 @@ class LightSource:
         position : array_like (size 2)
             A position (x, y)
         direction : float
-            Angle at which the beam propagates relative to x axis (in degrees)
+            Angle at which the beam propagates relative to x axis
         angle : float
             Half of a beam angle
         density : float
             Number of rays
+        degrees : bool, optional
+            If True, all angles are in degrees (Default: False)
         """
         self.density = density
-        self.K = np.tan(np.radians(np.linspace(direction - angle, 
-                                               direction + angle, 
-                                               density)))
+        if degrees:
+            self.K = np.tan(np.radians(np.linspace(direction - angle, 
+                                                   direction + angle, 
+                                                   density)))
+        else:
+            self.K = np.tan(np.linspace(direction - angle, 
+                                        direction + angle, 
+                                        density))
         self.B = np.tile(angle*position[0] + position[1], density)
         self.ray_points = np.array([np.tile(position, (density, 1))])
         
 class Surface:
-    def __init__(self, radius, func, n1=1, n2=1, func_prime=None):
+    """A class that represents a surface
+    
+    Attributes
+    ----------
+    func : function
+        A function which defines the surface
+    func_prime : function
+        A derivative of func
+    radius : float
+        Radius of a surface from x axis
+    n1 : float
+        Refractive index before the surface
+    n2 : float
+        Refractive index after the surface
+    """
+    def __init__(self, 
+                 radius: float, 
+                 func: Callable, 
+                 func_prime: Callable = None,
+                 n1: float = 1,
+                 n2: float = 1) -> None:
+        """Constructs a surface object
+        
+        Parameters
+        ----------
+        radius : float
+            Radius of a surface from x axis
+        func : function
+            A function which defines the surface
+        func_prime : function, optional
+            A derivative of func (Default: None)
+        n1 : float, optional
+            Refractive index before the surface (Default: 1)
+        n2 : float, optional
+            Refractive index after the surface  (Default: 1)
+        """
         self.func = func
         self.func_prime = func_prime
         self.radius = radius
@@ -51,17 +98,41 @@ class Surface:
         self.n2 = n2
         
 class OpticalSystem:
-    def __init__(self):
+    """A class that represents an optical system with surfaces and light sources
+    
+    Attributes
+    ----------
+    light_sources : array_like
+        An array of light sources
+    surfaces : array_like
+        An array of surfaces
+    fig : Figure
+        Matplotlib figure object
+    ax : Axis
+        Matplotlib axis object
+    """
+    def __init__(self) -> None:
+        """Constructs an optical system object"""
         self.light_sources = np.empty(0)
         self.surfaces = np.empty(0)
         
-    def add_light_sources(self, *light_sources):
+    def add_light_sources(self, *light_sources: ArrayLike) -> None:
+        """Adds light sources to the optical system
+        
+        Parameters
+        ----------
+        light_sources : array_like
+            An array of light sources
+        """
         self.light_sources = np.append(self.light_sources, light_sources)
         
     def add_surfaces(self, *surfaces):
-        self.surfaces = np.append(self.surfaces, surfaces)
+        self.surfaces = np.append(self.surfaces, sorted(surfaces, 
+                                                        key=lambda _: _.func(0),
+                                                        reverse=True))
         
-    def simulate(self):
+    def simulate(self) -> None:
+        """Simulates the optical system"""
         for light_source in self.light_sources:
             K_temp = light_source.K
             B_temp = light_source.B
@@ -130,17 +201,19 @@ class OpticalSystem:
                 
                 
                 
-    def show_plot(self):
+    def show_plot(self) -> None:
+        """Shows the optical system using Matplotlib"""
         self.fig, self.ax = plt.subplots()
         self.ax.set_aspect('equal', adjustable='box')
-        
-        for surface in self.surfaces:
-            x = np.linspace(-surface.radius, surface.radius, 1000)
-            self.ax.plot(x, surface.func(x))
         
         for light_source in self.light_sources:
             rays = light_source.ray_points
             for i in range(rays.shape[1]):
-                self.ax.plot(rays[:, i, 0], rays[:, i, 1])
+                self.ax.plot(rays[:, i, 0], rays[:, i, 1], c='yellow')
+                
+        for surface in self.surfaces:
+            x = np.linspace(-surface.radius, surface.radius, 1000)
+            self.ax.plot(x, surface.func(x), c='blue')
+        
                 
         plt.show()

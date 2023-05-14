@@ -6,7 +6,11 @@ Functions
         Returns the unit vector (array of unit vectors) of the vector (array)
     find_angle
         Returns the smallest angle between v1 and v2
+    init_LGN_vectors
+        Defining and initialising the line, grad and normal vectors
 """
+
+# TODO write docstring for init_LGN_vectors function
 
 import numpy as np
 from typing import Callable
@@ -62,7 +66,21 @@ def find_angle(v1: np.ndarray, v2: np.ndarray) -> float:
     return angle
 
 def init_LGN_vectors(grid: np.ndarray, origin: np.ndarray, f: Callable, f_prime: Callable):
-    '''Defining and initialising the line, grad and normal vectors'''
+    '''Defining and initialising the line, grad and normal vectors
+    
+    Parameters
+    ----------
+    grid : array_like
+    origin : array_like
+    f : function
+    f_prime : function
+    
+    Returns
+    -------
+    L : array_like
+    G : array_like
+    N : array_like
+    '''
     L = np.column_stack((grid, f(grid))) - origin 
     G = np.column_stack((np.ones(len(grid)), f_prime(grid)))
     N = np.column_stack((-f_prime(grid), np.ones(len(grid))))

@@ -1,4 +1,4 @@
-"""A simple library for geometrical optics simulation
+"""A simple package for geometrical optics simulation
 
 Requirements
 ------------
@@ -12,4 +12,4 @@ Sub-packages
     opticalsystem
 """
 
-from panoptica.opticalsystem import * # :(
+from panoptica.opticalsystem import *
