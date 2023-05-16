@@ -50,7 +50,7 @@ class LightSource:
             self.K = np.tan(np.linspace(direction - angle, 
                                         direction + angle, 
                                         density))
-        self.B = position[0]*self.K + position[1]*np.ones_like(self.K)
+        self.B = -position[0]*self.K + position[1]*np.ones_like(self.K)
         self.ray_points = np.array([np.tile(position, (density, 1))])
         
 class Surface:
@@ -144,6 +144,7 @@ class OpticalSystem:
             K_temp = light_source.K
             B_temp = light_source.B
             ray_position = light_source.ray_points[0]
+            x0 = ray_position[0][0]
             
             # To stop UnboundLocalError
             last_N = None
@@ -153,7 +154,7 @@ class OpticalSystem:
             betas = None
             
             for i, surface in enumerate(self.surfaces):
-                grid, conv = solver(K_temp, B_temp, surface.func, surface.func_prime)
+                grid, conv = solver(x0, K_temp, B_temp, surface.func, surface.func_prime)
                 L, G, N = init_LGN_vectors(grid, ray_position, surface.func, surface.func_prime)
                 
                 mask = np.logical_and(conv, np.abs(grid) < surface.radius)

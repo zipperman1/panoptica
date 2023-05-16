@@ -10,8 +10,6 @@ Functions
         Defining and initialising the line, grad and normal vectors
 """
 
-# TODO write docstring for init_LGN_vectors function
-
 import numpy as np
 from typing import Callable
 

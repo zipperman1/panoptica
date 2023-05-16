@@ -1,5 +1,6 @@
 """Numerical methods for panoptica
 
+
 Functions
 ---------
     uniform_grid
@@ -52,7 +53,7 @@ def uniform_grid(length: float,
         
     return grid[:i]
 
-def solver(K: np.ndarray, B: np.ndarray, f: Callable, f_prime: Callable = None):
+def solver(x0: float, K: np.ndarray, B: np.ndarray, f: Callable, f_prime: Callable = None):
     """Finds an intersection point between an object defined by the function f(x) and a ray defined by y = kx + b
     
     Parameters
@@ -83,8 +84,8 @@ def solver(K: np.ndarray, B: np.ndarray, f: Callable, f_prime: Callable = None):
     if f_prime is not None:
         def f_prime_solve(x, K, B):
             return f_prime(x) - K
-    
-    roots, conv, _ = opt.newton(f_to_solve, np.zeros(len(K)), \
+        
+    roots, conv, _ = opt.newton(f_to_solve, np.full(len(K), x0), \
                                 args=(K, B), fprime=f_prime_solve, full_output=True)
     
     return roots, conv
